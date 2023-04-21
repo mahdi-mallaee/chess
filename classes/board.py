@@ -1,4 +1,6 @@
 import pygame
+from classes.pieces.pawn import Pawn
+from classes.pieces.rook import Rook
 
 
 def translate_board_string(board_string):
@@ -60,6 +62,7 @@ class Board:
         self.board_squares = translate_board_string(self.initial_board_string)
         self.selected_square_index = -1
         self.selected_piece_index = -1
+        self.legal_moves_of_selected_piece = []
 
     def initial_board(self):
         self.board_squares = translate_board_string(self.initial_board_string)
@@ -72,12 +75,26 @@ class Board:
         if self.selected_piece_index == -1:
             if self.board_squares[square_index] != 'e':
                 self.selected_piece_index = square_index
+
+            self.draw_board()
         else:
             self.selected_square_index = square_index
-            self.move_piece()
+            if self.legal_moves_of_selected_piece.count(square_index) == 1:
+                self.move_piece()
+
             self.selected_square_index = -1
             self.selected_piece_index = -1
+            self.legal_moves_of_selected_piece = []
             self.draw_board()
+
+    def set_legal_moves(self):
+        square_index = self.selected_piece_index
+        if self.board_squares[square_index][1] == 'p':
+            pawn = Pawn(square_index, self.board_squares)
+            self.legal_moves_of_selected_piece = pawn.evaluate_legal_moves()
+        elif self.board_squares[square_index][1] == 'r':
+            rook = Rook(square_index, self.board_squares)
+            self.legal_moves_of_selected_piece = rook.evaluate_legal_moves()
 
     def move_piece(self):
         piece_notation = self.board_squares[self.selected_piece_index]
@@ -103,5 +120,8 @@ class Board:
                     image_rect = image.get_rect()
                     image_rect.center = square_rect.center
                     self.screen.blit(image, image_rect)
+
+                if self.legal_moves_of_selected_piece.count(square_index) == 1:
+                    pygame.draw.circle(self.screen, "red", square_rect.center, 20)
 
                 pygame.display.flip()
