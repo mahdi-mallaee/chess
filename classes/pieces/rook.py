@@ -5,7 +5,6 @@ class Rook:
         self.enemy_color = 'b'
         if board_squares[piece_index][0] == 'b':
             self.enemy_color = 'w'
-        print(board_squares[piece_index][1])
 
     def evaluate_legal_moves(self):
         legal_moves = []
@@ -23,21 +22,14 @@ class Rook:
                     else:
                         break
         for x in range(1, x_pos + 1):
-            print('1')
             if -1 < self.piece_index - x < 64:
-                print('2')
-                print(self.board_squares[self.piece_index - x])
                 if self.board_squares[self.piece_index - x] == 'e':
-                    print('3')
                     legal_moves.append(self.piece_index - x)
                 else:
-                    print('4')
                     if self.board_squares[self.piece_index - x][0] == self.enemy_color:
-                        print('5')
                         legal_moves.append(self.piece_index - x)
                         break
                     else:
-                        print('6')
                         break
         for i in range(1, 8):
             y = i * 8
@@ -62,5 +54,4 @@ class Rook:
                     else:
                         break
 
-        print(legal_moves)
         return legal_moves

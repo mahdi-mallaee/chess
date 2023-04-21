@@ -1,6 +1,7 @@
 import pygame
 from classes.pieces.pawn import Pawn
 from classes.pieces.rook import Rook
+from classes.pieces.king import King
 
 
 def translate_board_string(board_string):
@@ -75,7 +76,7 @@ class Board:
         if self.selected_piece_index == -1:
             if self.board_squares[square_index] != 'e':
                 self.selected_piece_index = square_index
-
+                self.set_legal_moves()
             self.draw_board()
         else:
             self.selected_square_index = square_index
@@ -95,6 +96,9 @@ class Board:
         elif self.board_squares[square_index][1] == 'r':
             rook = Rook(square_index, self.board_squares)
             self.legal_moves_of_selected_piece = rook.evaluate_legal_moves()
+        elif self.board_squares[square_index][1] == 'k':
+            king = King(square_index, self.board_squares)
+            self.legal_moves_of_selected_piece = king.evaluate_legal_moves()
 
     def move_piece(self):
         piece_notation = self.board_squares[self.selected_piece_index]
