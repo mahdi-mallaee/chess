@@ -1,35 +1,18 @@
 class King:
-    def __init__(self, piece_index, board_squares):
-        self.piece_index = piece_index
-        self.board_squares = board_squares
-        self.color = board_squares[piece_index][0]
+    def __init__(self, piece_position, board):
+        self.pos = piece_position
+        self.get_square = board.get_square
+        self.color = self.get_square(self.pos).piece_notation[0]
 
     def evaluate_legal_moves(self):
         legal_moves = []
+        x = self.pos[0]
+        y = self.pos[1]
+        viewing_positions = [(x - 1, y), (x + 1, y), (x, y + 1), (x, y - 1),
+                             (x - 1, y - 1), (x + 1, y + 1), (x - 1, y + 1), (x + 1, y - 1)]
 
-        if -1 < self.piece_index - 1 < 64 and \
-                self.board_squares[self.piece_index - 1][0] != self.color:
-            legal_moves.append(self.piece_index - 1)
-        if -1 < self.piece_index + 1 < 64 and \
-                self.board_squares[self.piece_index + 1][0] != self.color:
-            legal_moves.append(self.piece_index + 1)
-        if -1 < self.piece_index - 8 < 64 and \
-                self.board_squares[self.piece_index - 8][0] != self.color:
-            legal_moves.append(self.piece_index - 8)
-        if self.piece_index + 8 < 64 and \
-                self.board_squares[self.piece_index + 8][0] != self.color:
-            legal_moves.append(self.piece_index + 8)
-        if self.piece_index + 7 < 64 and \
-                self.board_squares[self.piece_index + 7][0] != self.color:
-            legal_moves.append(self.piece_index + 7)
-        if self.piece_index - 7 < 64 and \
-                self.board_squares[self.piece_index - 7][0] != self.color:
-            legal_moves.append(self.piece_index - 7)
-        if self.piece_index + 9 < 64 and \
-                self.board_squares[self.piece_index + 9][0] != self.color:
-            legal_moves.append(self.piece_index + 9)
-        if self.piece_index - 9 < 64 and \
-                self.board_squares[self.piece_index - 9][0] != self.color:
-            legal_moves.append(self.piece_index - 9)
+        for pos in viewing_positions:
+            if 0 < pos[0] < 9 and 0 < pos[1] < 9 and self.get_square(pos).piece_notation[0] != self.color:
+                legal_moves.append(pos)
 
         return legal_moves
