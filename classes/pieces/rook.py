@@ -1,55 +1,57 @@
 class Rook:
-    def __init__(self, piece_index, board_squares):
-        self.piece_index = piece_index
-        self.board_squares = board_squares
+    def __init__(self, piece_position, board):
+        self.piece_position = piece_position
+        self.x = piece_position[0]
+        self.y = piece_position[1]
+        self.board_squares = board.board_squares
         self.enemy_color = 'b'
-        if board_squares[piece_index][0] == 'b':
+        self.get_square = board.get_square
+        if board.get_square(piece_position).piece_notation[0] == 'b':
             self.enemy_color = 'w'
 
     def evaluate_legal_moves(self):
         legal_moves = []
-        x_pos = ((self.piece_index / 8) - int(self.piece_index / 8)) * 8
-        x_pos = int(x_pos)
+        x = self.x
+        y = self.y
 
-        for x in range(1, 8 - x_pos):
-            if -1 < self.piece_index + x < 64:
-                if self.board_squares[self.piece_index + x] == 'e':
-                    legal_moves.append(self.piece_index + x)
+        for i in range(1, 8):
+            if 0 < x + i < 9:
+                if self.get_square((x + i, y)).piece_notation == 'e':
+                    legal_moves.append((x + i, y))
                 else:
-                    if self.board_squares[self.piece_index + x][0] == self.enemy_color:
-                        legal_moves.append(self.piece_index + x)
-                        break
-                    else:
-                        break
-        for x in range(1, x_pos + 1):
-            if -1 < self.piece_index - x < 64:
-                if self.board_squares[self.piece_index - x] == 'e':
-                    legal_moves.append(self.piece_index - x)
-                else:
-                    if self.board_squares[self.piece_index - x][0] == self.enemy_color:
-                        legal_moves.append(self.piece_index - x)
+                    if self.get_square((x + i, y)).piece_notation[0] == self.enemy_color:
+                        legal_moves.append((x + i, y))
                         break
                     else:
                         break
         for i in range(1, 8):
-            y = i * 8
-            if -1 < self.piece_index - y < 64:
-                if self.board_squares[self.piece_index - y] == 'e':
-                    legal_moves.append(self.piece_index - y)
+            if 0 < x - i < 9:
+                if self.get_square((x - i, y)).piece_notation == 'e':
+                    legal_moves.append((x - i, y))
                 else:
-                    if self.board_squares[self.piece_index - y][0] == self.enemy_color:
-                        legal_moves.append(self.piece_index - y)
+                    if self.get_square((x - i, y)).piece_notation[0] == self.enemy_color:
+                        legal_moves.append((x - i, y))
                         break
                     else:
                         break
         for i in range(1, 8):
-            y = i * 8
-            if -1 < self.piece_index + y < 64:
-                if self.board_squares[self.piece_index + y] == 'e':
-                    legal_moves.append(self.piece_index + y)
+            if 0 < y - i < 9:
+                if self.get_square((x, y - i)).piece_notation == 'e':
+                    legal_moves.append((x, y - i))
                 else:
-                    if self.board_squares[self.piece_index + y][0] == self.enemy_color:
-                        legal_moves.append(self.piece_index + y)
+                    if self.get_square((x, y - i)).piece_notation[0] == self.enemy_color:
+                        legal_moves.append((x, y - i))
+                        break
+                    else:
+                        break
+
+        for i in range(1, 8):
+            if 0 < y + i < 9:
+                if self.get_square((x, y + i)).piece_notation == 'e':
+                    legal_moves.append((x, y + i))
+                else:
+                    if self.get_square((x, y + i)).piece_notation[0] == self.enemy_color:
+                        legal_moves.append((x, y + i))
                         break
                     else:
                         break
