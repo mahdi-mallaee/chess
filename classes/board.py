@@ -32,35 +32,6 @@ COLOR_ODD = (100, 100, 100)
 COLOR_EVEN = (200, 200, 200)
 
 
-def get_piece_image(piece_string):
-    piece_image = pygame.image.load('assets/white_king.png')
-    if piece_string == 'wr':
-        piece_image = pygame.image.load('assets/white_rook.png')
-    elif piece_string == 'wn':
-        piece_image = pygame.image.load('assets/white_knight.png')
-    elif piece_string == 'wb':
-        piece_image = pygame.image.load('assets/white_bishop.png')
-    elif piece_string == 'wq':
-        piece_image = pygame.image.load('assets/white_queen.png')
-    elif piece_string == 'wk':
-        piece_image = pygame.image.load('assets/white_king.png')
-    elif piece_string == 'wp':
-        piece_image = pygame.image.load('assets/white_pawn.png')
-    elif piece_string == 'br':
-        piece_image = pygame.image.load('assets/black_rook.png')
-    elif piece_string == 'bb':
-        piece_image = pygame.image.load('assets/black_bishop.png')
-    elif piece_string == 'bn':
-        piece_image = pygame.image.load('assets/black_knight.png')
-    elif piece_string == 'bk':
-        piece_image = pygame.image.load('assets/black_king.png')
-    elif piece_string == 'bq':
-        piece_image = pygame.image.load('assets/black_queen.png')
-    elif piece_string == 'bp':
-        piece_image = pygame.image.load('assets/black_pawn.png')
-    return piece_image
-
-
 class Board:
     def __init__(self, width, screen):
         self.screen = screen
@@ -132,8 +103,9 @@ class Board:
                 square_rect = pygame.draw.rect(self.screen, color, (
                     square_start_point_x, square_start_point_y, self.square_width, self.square_width))
 
-                if self.get_square(pos).piece_notation != "e":
-                    image = get_piece_image(self.get_square(pos).piece_notation)
+                square = self.get_square(pos)
+                if square.piece_notation != "e":
+                    image = square.get_piece_image()
                     image = pygame.transform.scale(image, (self.square_width - 10, self.square_width - 10))
                     image_rect = image.get_rect()
                     image_rect.center = square_rect.center
