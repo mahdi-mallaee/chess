@@ -31,12 +31,11 @@ class Square:
 
     def get_legal_moves(self):
         pos = self.pos
-        if self.piece_notation[1] == 'p':
-            pawn = Pawn(pos, self.board)
-            return pawn.evaluate_legal_moves()
-        elif self.piece_notation[1] == 'r':
-            rook = Rook(pos, self.board)
-            return rook.evaluate_legal_moves()
-        elif self.piece_notation[1] == 'k':
-            king = King(pos, self.board)
-            return king.evaluate_legal_moves()
+        notation = self.piece_notation[1]
+
+        piece_dict = {
+            'p': Pawn(pos, self.board),
+            'r': Rook(pos, self.board),
+            'k': King(pos, self.board)
+        }
+        return piece_dict[notation].evaluate_legal_moves()
