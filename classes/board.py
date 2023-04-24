@@ -1,32 +1,5 @@
 import pygame
-from classes.pieces.pawn import Pawn
-from classes.pieces.rook import Rook
-from classes.pieces.king import King
 from classes.square import Square
-
-
-def translate_board_string(board_string):
-    board_string = str(board_string)
-    rows = board_string.split("/")
-    board = []
-    y = 0
-    for row in rows:
-        y += 1
-        x = 0
-        notations = row.split('-')
-        for notation in notations:
-            if notation.isnumeric():
-                empty_squares_count = int(notation)
-                for i in range(0, empty_squares_count):
-                    x += 1
-                    square = Square((x, y), 'e')
-                    board.append(square)
-            else:
-                x += 1
-                square = Square((x, y), notation)
-                board.append(square)
-    return board
-
 
 COLOR_ODD = (100, 100, 100)
 COLOR_EVEN = (200, 200, 200)
@@ -39,14 +12,36 @@ class Board:
         self.square_width = width / 8
         self.initial_board_string = "wr-wn-wb-wq-wk-wb-wn-wr/wp-wp-wp-wp-wp-wp-wp-wp/8/8/8/8/" \
                                     "bp-bp-bp-bp-bp-bp-bp-bp/br-bn-bb-bq-bk-bb-bn-br"
-        self.board_squares = translate_board_string(self.initial_board_string)
+        self.board_squares = self.translate_board_string(self.initial_board_string)
         self.selected_square_position = (0, 0)
         self.selected_piece_position = (0, 0)
         self.legal_moves_of_selected_piece = []
 
     def initial_board(self):
-        self.board_squares = translate_board_string(self.initial_board_string)
+        self.board_squares = self.translate_board_string(self.initial_board_string)
         self.draw_board()
+
+    def translate_board_string(self, board_string):
+        board_string = str(board_string)
+        rows = board_string.split("/")
+        board = []
+        y = 0
+        for row in rows:
+            y += 1
+            x = 0
+            notations = row.split('-')
+            for notation in notations:
+                if notation.isnumeric():
+                    empty_squares_count = int(notation)
+                    for i in range(0, empty_squares_count):
+                        x += 1
+                        square = Square(self, (x, y), 'e')
+                        board.append(square)
+                else:
+                    x += 1
+                    square = Square(self, (x, y), notation)
+                    board.append(square)
+        return board
 
     def get_square(self, piece_position):
         for square in self.board_squares:
@@ -74,15 +69,7 @@ class Board:
 
     def set_legal_moves(self):
         pos = self.selected_piece_position
-        if self.get_square(pos).piece_notation[1] == 'p':
-            pawn = Pawn(pos, self)
-            self.legal_moves_of_selected_piece = pawn.evaluate_legal_moves()
-        elif self.get_square(pos).piece_notation[1] == 'r':
-            rook = Rook(pos, self)
-            self.legal_moves_of_selected_piece = rook.evaluate_legal_moves()
-        elif self.get_square(pos).piece_notation[1] == 'k':
-            king = King(pos, self)
-            self.legal_moves_of_selected_piece = king.evaluate_legal_moves()
+        self.legal_moves_of_selected_piece = self.get_square(pos).get_legal_moves()
 
     def move_piece(self):
         piece_notation = self.get_square(self.selected_piece_position).piece_notation
