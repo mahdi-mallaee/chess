@@ -54,18 +54,20 @@ class Board:
         y = int((self.width - mouse_y) / self.square_width) + 1
         pos = (x, y)
         piece_notation = self.get_square(pos).piece_notation
-        if self.selected_piece_position == NONE_POS:
+
+        if self.selected_piece_position != NONE_POS and self.selected_piece_legal_moves.count(pos) == 1:
+            self.selected_square_position = pos
+            self.move_piece()
+            self.clear_selected_piece()
+            self.draw_board()
+        else:
             if piece_notation != 'e':
                 self.selected_piece_position = pos
                 self.set_legal_moves()
-            self.draw_board()
-        else:
-            self.selected_square_position = pos
-            if self.selected_piece_legal_moves.count(pos) == 1:
-                self.move_piece()
-
-            self.clear_selected_piece()
-            self.draw_board()
+                self.draw_board()
+            else:
+                self.clear_selected_piece()
+                self.draw_board()
 
     def clear_selected_piece(self):
         self.selected_square_position = NONE_POS
