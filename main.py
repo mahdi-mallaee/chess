@@ -21,7 +21,7 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                Board.handle_click_on_board(board, mouse_x, mouse_y)
+                Board.handle_board_click(board, mouse_x, mouse_y)
 
     if not isBoardDrawn:
         Board.initial_board(board)

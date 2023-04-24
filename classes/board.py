@@ -3,6 +3,7 @@ from classes.square import Square
 
 COLOR_ODD = (100, 100, 100)
 COLOR_EVEN = (200, 200, 200)
+NONE_POS = (0, 0)
 
 
 class Board:
@@ -13,9 +14,9 @@ class Board:
         self.initial_board_string = "wr-wn-wb-wq-wk-wb-wn-wr/wp-wp-wp-wp-wp-wp-wp-wp/8/8/8/8/" \
                                     "bp-bp-bp-bp-bp-bp-bp-bp/br-bn-bb-bq-bk-bb-bn-br"
         self.board_squares = self.translate_board_string(self.initial_board_string)
-        self.selected_square_position = (0, 0)
-        self.selected_piece_position = (0, 0)
-        self.legal_moves_of_selected_piece = []
+        self.selected_square_position = NONE_POS
+        self.selected_piece_position = NONE_POS
+        self.selected_piece_legal_moves = []
 
     def initial_board(self):
         self.board_squares = self.translate_board_string(self.initial_board_string)
@@ -48,28 +49,32 @@ class Board:
             if square.pos == piece_position:
                 return square
 
-    def handle_click_on_board(self, mouse_x, mouse_y):
+    def handle_board_click(self, mouse_x, mouse_y):
         x = int(mouse_x / self.square_width) + 1
         y = int((self.width - mouse_y) / self.square_width) + 1
         pos = (x, y)
-        if self.selected_piece_position == (0, 0):
-            if self.get_square(pos).piece_notation != 'e':
+        piece_notation = self.get_square(pos).piece_notation
+        if self.selected_piece_position == NONE_POS:
+            if piece_notation != 'e':
                 self.selected_piece_position = pos
                 self.set_legal_moves()
             self.draw_board()
         else:
             self.selected_square_position = pos
-            if self.legal_moves_of_selected_piece.count(pos) == 1:
+            if self.selected_piece_legal_moves.count(pos) == 1:
                 self.move_piece()
 
-            self.selected_square_position = (0, 0)
-            self.selected_piece_position = (0, 0)
-            self.legal_moves_of_selected_piece = []
+            self.clear_selected_piece()
             self.draw_board()
+
+    def clear_selected_piece(self):
+        self.selected_square_position = NONE_POS
+        self.selected_piece_position = NONE_POS
+        self.selected_piece_legal_moves = []
 
     def set_legal_moves(self):
         pos = self.selected_piece_position
-        self.legal_moves_of_selected_piece = self.get_square(pos).get_legal_moves()
+        self.selected_piece_legal_moves = self.get_square(pos).get_legal_moves()
 
     def move_piece(self):
         piece_notation = self.get_square(self.selected_piece_position).piece_notation
@@ -97,8 +102,8 @@ class Board:
                     image_rect = image.get_rect()
                     image_rect.center = square_rect.center
                     self.screen.blit(image, image_rect)
-                self.get_square(pos)
-                if self.legal_moves_of_selected_piece.count(pos) == 1:
+
+                if self.selected_piece_legal_moves.count(pos) == 1:
                     pygame.draw.circle(self.screen, "red", square_rect.center, 20)
 
                 pygame.display.flip()
