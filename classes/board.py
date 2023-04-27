@@ -4,6 +4,8 @@ from classes.square import Square
 COLOR_ODD = (100, 100, 100)
 COLOR_EVEN = (200, 200, 200)
 NONE_POS = (0, 0)
+LEGAL_MOVE_COLOR = 'red'
+SQUARE_PADDING = 15
 
 
 class Board:
@@ -17,10 +19,17 @@ class Board:
         self.selected_square_position = NONE_POS
         self.selected_piece_position = NONE_POS
         self.selected_piece_legal_moves = []
+        self.turn_color = 'w'
 
     def initial_board(self):
         self.board_squares = self.translate_board_string(self.initial_board_string)
         self.draw_board()
+
+    def change_turn(self):
+        if self.turn_color == 'w':
+            self.turn_color = 'b'
+        else:
+            self.turn_color = 'w'
 
     def translate_board_string(self, board_string):
         board_string = str(board_string)
@@ -58,10 +67,11 @@ class Board:
         if self.selected_piece_position != NONE_POS and self.selected_piece_legal_moves.count(pos) == 1:
             self.selected_square_position = pos
             self.move_piece()
+            self.change_turn()
             self.clear_selected_piece()
             self.draw_board()
         else:
-            if piece_notation != 'e':
+            if piece_notation != 'e' and piece_notation[0] == self.turn_color:
                 self.selected_piece_position = pos
                 self.set_legal_moves()
                 self.draw_board()
@@ -100,12 +110,13 @@ class Board:
                 square = self.get_square(pos)
                 if square.piece_notation != "e":
                     image = square.get_piece_image()
-                    image = pygame.transform.scale(image, (self.square_width - 10, self.square_width - 10))
+                    image = pygame.transform.scale(image, (
+                        self.square_width - SQUARE_PADDING, self.square_width - SQUARE_PADDING))
                     image_rect = image.get_rect()
                     image_rect.center = square_rect.center
                     self.screen.blit(image, image_rect)
 
                 if self.selected_piece_legal_moves.count(pos) == 1:
-                    pygame.draw.circle(self.screen, "red", square_rect.center, 20)
+                    pygame.draw.circle(self.screen, LEGAL_MOVE_COLOR, square_rect.center, 15)
 
                 pygame.display.flip()
