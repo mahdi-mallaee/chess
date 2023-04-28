@@ -14,46 +14,19 @@ class Rook:
         x = self.x
         y = self.y
 
-        for i in range(1, 8):
-            if 0 < x + i < 9:
-                if self.get_square((x + i, y)).piece_notation == 'e':
-                    legal_moves.append((x + i, y))
-                else:
-                    if self.get_square((x + i, y)).piece_notation[0] == self.enemy_color:
-                        legal_moves.append((x + i, y))
-                        break
-                    else:
-                        break
-        for i in range(1, 8):
-            if 0 < x - i < 9:
-                if self.get_square((x - i, y)).piece_notation == 'e':
-                    legal_moves.append((x - i, y))
-                else:
-                    if self.get_square((x - i, y)).piece_notation[0] == self.enemy_color:
-                        legal_moves.append((x - i, y))
-                        break
-                    else:
-                        break
-        for i in range(1, 8):
-            if 0 < y - i < 9:
-                if self.get_square((x, y - i)).piece_notation == 'e':
-                    legal_moves.append((x, y - i))
-                else:
-                    if self.get_square((x, y - i)).piece_notation[0] == self.enemy_color:
-                        legal_moves.append((x, y - i))
-                        break
-                    else:
-                        break
+        for j in range(0, 4):
+            for i in range(1, 8):
+                check_positions = [(x + i, y), (x - i, y), (x, y + i), (x, y - i)]
+                pos = check_positions[j]
 
-        for i in range(1, 8):
-            if 0 < y + i < 9:
-                if self.get_square((x, y + i)).piece_notation == 'e':
-                    legal_moves.append((x, y + i))
-                else:
-                    if self.get_square((x, y + i)).piece_notation[0] == self.enemy_color:
-                        legal_moves.append((x, y + i))
-                        break
+                if 0 < pos[0] < 9 and 0 < pos[1] < 9:
+                    if self.get_square(pos).piece_notation == 'e':
+                        legal_moves.append(pos)
                     else:
-                        break
+                        if self.get_square(pos).piece_notation[0] == self.enemy_color:
+                            legal_moves.append(pos)
+                            break
+                        else:
+                            break
 
         return legal_moves
