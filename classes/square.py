@@ -6,12 +6,11 @@ from classes.pieces.bishop import Bishop
 
 
 class Square:
-    def __init__(self, board, square_position, piece_notation):
+    def __init__(self, board, pos, piece_notation):
         self.board = board
-        self.x = square_position[0]
-        self.y = square_position[1]
-        self.pos = (self.x, self.y)
+        self.pos = pos
         self.piece_notation = piece_notation
+        self.color = piece_notation[0]
 
     def get_piece_image(self):
         color = self.piece_notation[0]

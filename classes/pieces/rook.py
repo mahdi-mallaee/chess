@@ -1,18 +1,13 @@
 class Rook:
-    def __init__(self, piece_position, board):
-        self.piece_position = piece_position
-        self.x = piece_position[0]
-        self.y = piece_position[1]
-        self.board_squares = board.board_squares
-        self.enemy_color = 'b'
+    def __init__(self, pos, board):
+        self.pos = pos
         self.get_square = board.get_square
-        if board.get_square(piece_position).piece_notation[0] == 'b':
-            self.enemy_color = 'w'
+        self.color = board.get_square(pos).color
 
     def evaluate_legal_moves(self):
         legal_moves = []
-        x = self.x
-        y = self.y
+        x = self.pos[0]
+        y = self.pos[1]
 
         for j in range(0, 4):
             for i in range(1, 8):
@@ -23,7 +18,7 @@ class Rook:
                     if self.get_square(pos).piece_notation == 'e':
                         legal_moves.append(pos)
                     else:
-                        if self.get_square(pos).piece_notation[0] == self.enemy_color:
+                        if self.get_square(pos).color != self.color:
                             legal_moves.append(pos)
                             break
                         else:

@@ -1,16 +1,13 @@
 class Pawn:
-    def __init__(self, piece_position, board):
-        self.x = piece_position[0]
-        self.y = piece_position[1]
-        self.pos = (self.x, self.y)
+    def __init__(self, pos, board):
+        self.pos = pos
         self.first_move = False
-        self.board_squares = board.board_squares
         self.get_square = board.get_square
-        self.color = self.get_square(self.pos).piece_notation[0]
+        self.color = self.get_square(self.pos).color
 
     def evaluate_legal_moves(self):
-        x = self.x
-        y = self.y
+        x = self.pos[0]
+        y = self.pos[1]
         legal_moves = []
 
         if self.color == 'w':
@@ -22,10 +19,10 @@ class Pawn:
                     self.get_square((x, y + 1)).piece_notation == 'e':
                 legal_moves.append((x, y + 2))
             if 0 < x + 1 < 9 and 0 < y + 1 < 9 and self.get_square((x + 1, y + 1)).piece_notation != 'e' and \
-                    self.get_square((x + 1, y + 1)).piece_notation[0] != 'w':
+                    self.get_square((x + 1, y + 1)).color != 'w':
                 legal_moves.append((x + 1, y + 1))
             if 0 < x - 1 < 9 and 0 < y + 1 < 9 and self.get_square((x - 1, y + 1)).piece_notation != 'e' and \
-                    self.get_square((x - 1, y + 1)).piece_notation[0] != 'w':
+                    self.get_square((x - 1, y + 1)).color != 'w':
                 legal_moves.append((x - 1, y + 1))
         else:
             if y == 7:
@@ -36,10 +33,10 @@ class Pawn:
                     self.get_square((x, y - 1)).piece_notation == 'e':
                 legal_moves.append((x, y - 2))
             if 0 < x - 1 < 9 and 0 < y - 1 < 9 and self.get_square((x - 1, y - 1)).piece_notation != 'e' and \
-                    self.get_square((x - 1, y - 1)).piece_notation[0] != 'b':
+                    self.get_square((x - 1, y - 1)).color != 'b':
                 legal_moves.append((x - 1, y - 1))
             if 0 < x + 1 < 9 and 0 < y - 1 < 9 and self.get_square((x + 1, y - 1)).piece_notation != 'e' and \
-                    self.get_square((x + 1, y - 1)).piece_notation[0] != 'b':
+                    self.get_square((x + 1, y - 1)).color != 'b':
                 legal_moves.append((x + 1, y - 1))
 
         return legal_moves
