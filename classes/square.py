@@ -2,6 +2,7 @@ import pygame
 from classes.pieces.pawn import Pawn
 from classes.pieces.rook import Rook
 from classes.pieces.king import King
+from classes.pieces.bishop import Bishop
 
 
 class Square:
@@ -36,6 +37,7 @@ class Square:
         piece_dict = {
             'p': Pawn(pos, self.board),
             'r': Rook(pos, self.board),
-            'k': King(pos, self.board)
+            'k': King(pos, self.board),
+            'b': Bishop(pos, self.board)
         }
         return piece_dict[notation].evaluate_legal_moves()
