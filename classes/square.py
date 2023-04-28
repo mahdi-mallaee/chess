@@ -4,6 +4,7 @@ from classes.pieces.rook import Rook
 from classes.pieces.king import King
 from classes.pieces.bishop import Bishop
 from classes.pieces.queen import Queen
+from classes.pieces.knight import Knight
 
 
 class Square:
@@ -39,6 +40,7 @@ class Square:
             'r': Rook(pos, self.board),
             'k': King(pos, self.board),
             'b': Bishop(pos, self.board),
-            'q': Queen(pos, self.board)
+            'q': Queen(pos, self.board),
+            'n': Knight(pos, self.board)
         }
         return piece_dict[notation].evaluate_legal_moves()
