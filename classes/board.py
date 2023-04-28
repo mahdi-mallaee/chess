@@ -92,6 +92,7 @@ class Board:
         piece_notation = self.get_square(self.selected_piece_position).piece_notation
         self.get_square(self.selected_piece_position).piece_notation = 'e'
         self.get_square(self.selected_square_position).piece_notation = piece_notation
+        self.get_square(self.selected_square_position).color = piece_notation[0]
 
     def draw_board(self):
         for y in range(1, 9):
