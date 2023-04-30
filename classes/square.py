@@ -44,3 +44,8 @@ class Square:
             'n': Knight(pos, self.board)
         }
         return piece_dict[notation].evaluate_legal_moves()
+
+    def is_in_check(self):
+        pos = self.board.get_squares_by_notation(self.color + 'k')[0].pos
+        king = King(pos, self.board)
+        return king.is_in_check()

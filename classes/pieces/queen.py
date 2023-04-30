@@ -19,7 +19,7 @@ class Queen:
                     if self.get_square(pos).piece_notation == 'e':
                         legal_moves.append(pos)
                     else:
-                        if self.get_square(pos).color != self.color and self.get_square(pos).color != 'e':
+                        if self.get_square(pos).color != self.color:
                             legal_moves.append(pos)
                             break
                         else:

@@ -1,5 +1,6 @@
 import pygame
 from classes.square import Square
+from classes.eboard import EBoard
 
 COLOR_ODD = (100, 100, 100)
 COLOR_EVEN = (200, 200, 200)
@@ -58,6 +59,13 @@ class Board:
             if square.pos == piece_position:
                 return square
 
+    def get_squares_by_notation(self, notation):
+        squares = []
+        for s in self.board_squares:
+            if s.piece_notation == notation:
+                squares.append(s)
+        return squares
+
     def handle_board_click(self, mouse_x, mouse_y):
         x = int(mouse_x / self.square_width) + 1
         y = int((self.width - mouse_y) / self.square_width) + 1
@@ -66,8 +74,8 @@ class Board:
 
         if self.selected_piece_position != NONE_POS and self.selected_piece_legal_moves.count(pos) == 1:
             self.selected_square_position = pos
-            self.move_piece()
             self.change_turn()
+            self.move_piece()
             self.clear_selected_piece()
             self.draw_board()
         else:
@@ -79,6 +87,29 @@ class Board:
                 self.clear_selected_piece()
                 self.draw_board()
 
+    def is_in_check(self):
+        square = self.get_squares_by_notation(self.turn_color + 'k')[0]
+        is_in_check = square.is_in_check()
+        return is_in_check
+
+    def checkmate_check(self):
+        if self.is_in_check():
+            moves = []
+            for s in self.board_squares:
+                if s.piece_notation != 'e' and s.color == self.turn_color:
+                    legal_moves = self.get_square(s.pos).get_legal_moves()
+                    for move in legal_moves:
+                        e_board = EBoard(self.board_squares, self.turn_color)
+                        e_board.move_piece(s.pos, move)
+                        if not e_board.is_in_check():
+                            moves.append(move)
+            if len(moves) > 0:
+                return False
+            else:
+                return True
+        else:
+            return False
+
     def clear_selected_piece(self):
         self.selected_square_position = NONE_POS
         self.selected_piece_position = NONE_POS
@@ -86,14 +117,25 @@ class Board:
 
     def set_legal_moves(self):
         pos = self.selected_piece_position
-        self.selected_piece_legal_moves = self.get_square(pos).get_legal_moves()
+        moves = []
+        legal_moves = self.get_square(pos).get_legal_moves()
+        for move in legal_moves:
+            e_board = EBoard(self.board_squares, self.turn_color)
+            e_board.move_piece(pos, move)
+            if not e_board.is_in_check():
+                moves.append(move)
+        self.selected_piece_legal_moves = moves
 
     def move_piece(self):
-        piece_notation = self.get_square(self.selected_piece_position).piece_notation
-        self.get_square(self.selected_piece_position).piece_notation = 'e'
-        self.get_square(self.selected_square_position).piece_notation = piece_notation
-        self.get_square(self.selected_square_position).color = piece_notation[0]
-        self.get_square(self.selected_piece_position).color = 'e'
+        piece = self.get_square(self.selected_piece_position)
+        square = self.get_square(self.selected_square_position)
+        notation = piece.piece_notation
+        piece.piece_notation = 'e'
+        square.piece_notation = notation
+        square.color = notation[0]
+        piece.color = 'e'
+        if self.checkmate_check():
+            print(self.turn_color + ' is loser')
 
     def draw_board(self):
         for y in range(1, 9):
