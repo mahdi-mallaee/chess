@@ -14,16 +14,16 @@ class Board:
         self.screen = screen
         self.width = width
         self.square_width = width / 8
-        self.initial_board_string = "wr-wn-wb-wq-wk-wb-wn-wr/wp-wp-wp-wp-wp-wp-wp-wp/8/8/8/8/" \
-                                    "bp-bp-bp-bp-bp-bp-bp-bp/br-bn-bb-bq-bk-bb-bn-br"
-        self.board_squares = self.translate_board_string(self.initial_board_string)
+        self.initial_board_string = 'RNBQKBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbqkbnr w KQkq - 0 1'
+        self.board_string = self.initial_board_string
+        self.board_squares = self.translate_fen(self.initial_board_string)
         self.selected_square_position = NONE_POS
         self.selected_piece_position = NONE_POS
         self.selected_piece_legal_moves = []
         self.turn_color = 'w'
 
     def initial_board(self):
-        self.board_squares = self.translate_board_string(self.initial_board_string)
+        self.board_squares = self.translate_fen(self.initial_board_string)
         self.draw_board()
 
     def change_turn(self):
@@ -32,26 +32,36 @@ class Board:
         else:
             self.turn_color = 'w'
 
-    def translate_board_string(self, board_string):
+    def translate_fen(self, board_string):
         board_string = str(board_string)
+
         rows = board_string.split("/")
+        additional_info = rows[-1].split(' ')
+        rows.remove(rows[-1])
+        rows.append(additional_info[0])
+        additional_info.remove(additional_info[0])
+
+        turn_color = additional_info[0]
+        self.turn_color = turn_color
+
         board = []
         y = 0
         for row in rows:
             y += 1
             x = 0
-            notations = row.split('-')
-            for notation in notations:
+            for notation in row:
                 if notation.isnumeric():
                     empty_squares_count = int(notation)
                     for i in range(0, empty_squares_count):
                         x += 1
-                        square = Square(self, (x, y), 'e')
+                        square = Square(self, (x, y), 'e', 'e')
                         board.append(square)
                 else:
+                    color = 'w' if notation.isupper() else 'b'
                     x += 1
-                    square = Square(self, (x, y), notation)
+                    square = Square(self, (x, y), notation.lower(), color)
                     board.append(square)
+
         return board
 
     def get_square(self, piece_position):
@@ -59,10 +69,10 @@ class Board:
             if square.pos == piece_position:
                 return square
 
-    def get_squares_by_notation(self, notation):
+    def get_squares_by_notation(self, notation, color):
         squares = []
         for s in self.board_squares:
-            if s.piece_notation == notation:
+            if s.notation == notation and s.color == color:
                 squares.append(s)
         return squares
 
@@ -70,7 +80,7 @@ class Board:
         x = int(mouse_x / self.square_width) + 1
         y = int((self.width - mouse_y) / self.square_width) + 1
         pos = (x, y)
-        piece_notation = self.get_square(pos).piece_notation
+        square = self.get_square(pos)
 
         if self.selected_piece_position != NONE_POS and self.selected_piece_legal_moves.count(pos) == 1:
             self.selected_square_position = pos
@@ -79,7 +89,7 @@ class Board:
             self.clear_selected_piece()
             self.draw_board()
         else:
-            if piece_notation != 'e' and piece_notation[0] == self.turn_color:
+            if not square.is_empty() and square.color == self.turn_color:
                 self.selected_piece_position = pos
                 self.set_legal_moves()
                 self.draw_board()
@@ -88,7 +98,7 @@ class Board:
                 self.draw_board()
 
     def is_in_check(self):
-        square = self.get_squares_by_notation(self.turn_color + 'k')[0]
+        square = self.get_squares_by_notation('k', self.turn_color)[0]
         is_in_check = square.is_in_check()
         return is_in_check
 
@@ -96,7 +106,7 @@ class Board:
         if self.is_in_check():
             moves = []
             for s in self.board_squares:
-                if s.piece_notation != 'e' and s.color == self.turn_color:
+                if not s.is_empty() and s.color == self.turn_color:
                     legal_moves = self.get_square(s.pos).get_legal_moves()
                     for move in legal_moves:
                         e_board = EBoard(self.board_squares, self.turn_color)
@@ -129,10 +139,9 @@ class Board:
     def move_piece(self):
         piece = self.get_square(self.selected_piece_position)
         square = self.get_square(self.selected_square_position)
-        notation = piece.piece_notation
-        piece.piece_notation = 'e'
-        square.piece_notation = notation
-        square.color = notation[0]
+        square.notation = piece.notation
+        square.color = piece.color
+        piece.notation = 'e'
         piece.color = 'e'
         if self.checkmate_check():
             print(self.turn_color + ' is loser')
@@ -152,7 +161,7 @@ class Board:
                     square_start_point_x, square_start_point_y, self.square_width, self.square_width))
 
                 square = self.get_square(pos)
-                if square.piece_notation != "e":
+                if not square.is_empty():
                     image = square.get_piece_image()
                     image = pygame.transform.scale(image, (
                         self.square_width - SQUARE_PADDING, self.square_width - SQUARE_PADDING))

@@ -8,15 +8,13 @@ from classes.pieces.knight import Knight
 
 
 class Square:
-    def __init__(self, board, pos, piece_notation):
+    def __init__(self, board, pos, notation, color):
         self.board = board
         self.pos = pos
-        self.piece_notation = piece_notation
-        self.color = piece_notation[0]
+        self.notation = notation
+        self.color = color
 
     def get_piece_image(self):
-        color = self.piece_notation[0]
-        notation = self.piece_notation[1]
         color_dict = {
             'b': 'black',
             'w': 'white'
@@ -29,11 +27,10 @@ class Square:
             'k': 'king',
             'p': 'pawn'
         }
-        return pygame.image.load('assets/' + color_dict[color] + '_' + notation_dict[notation] + '.png')
+        return pygame.image.load('assets/' + color_dict[self.color] + '_' + notation_dict[self.notation] + '.png')
 
     def get_legal_moves(self):
         pos = self.pos
-        notation = self.piece_notation[1]
 
         piece_dict = {
             'p': Pawn(pos, self.board),
@@ -43,9 +40,15 @@ class Square:
             'q': Queen(pos, self.board),
             'n': Knight(pos, self.board)
         }
-        return piece_dict[notation].evaluate_legal_moves()
+        return piece_dict[self.notation].evaluate_legal_moves()
 
     def is_in_check(self):
-        pos = self.board.get_squares_by_notation(self.color + 'k')[0].pos
+        pos = self.board.get_squares_by_notation('k', self.color)[0].pos
         king = King(pos, self.board)
         return king.is_in_check()
+
+    def is_empty(self):
+        if self.notation == 'e':
+            return True
+        else:
+            return False

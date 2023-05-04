@@ -20,11 +20,11 @@ class King:
 
     def is_in_check(self):
         for square in self.board.board_squares:
-            if square.piece_notation != 'e':
+            if not square.is_empty():
                 legal_moves = square.get_legal_moves()
                 for move in legal_moves:
                     s = self.get_square(move)
-                    if s.piece_notation == self.color + 'k':
+                    if s.notation == 'k' and s.color == self.color:
                         return True
 
         return False

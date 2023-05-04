@@ -15,7 +15,7 @@ class Bishop:
                 pos = check_positions[j]
 
                 if 0 < pos[0] < 9 and 0 < pos[1] < 9:
-                    if self.get_square(pos).piece_notation == 'e':
+                    if self.get_square(pos).is_empty():
                         legal_moves.append(pos)
                     else:
                         if self.get_square(pos).color != self.color:
